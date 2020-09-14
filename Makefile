@@ -51,6 +51,7 @@ flash: build
 	openocd -f flash/flash.cfg
 debug: flash
 	openocd -f flash/debug.cfg
+
 # libopencm3
 
 libopencm3/Makefile:
