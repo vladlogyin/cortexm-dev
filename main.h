@@ -7,6 +7,7 @@
 #include <lm75/lm75.h>
 #include <htu21d/htu21d.h>
 #include <ds3231/ds3231.h>
+#include <ili9341/ili9341.h>
 #include <systems.h>
 #include <stdlib.h>
 //#include <stdio.h>

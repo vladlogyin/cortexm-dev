@@ -3,6 +3,7 @@
 //BMP180 myBMP(BMP180_ULTRAHIGHRES);//BMP180 
 //HTU21D myHTU21D(HTU21D_RES_RH12_TEMP14);
 ds3231 ds;
+ili9341 sc;
 int main()
 {
 __asm(".global __use_no_semihosting\n\t");
@@ -23,16 +24,16 @@ __asm(".global __use_no_semihosting\n\t");
   }*/
   printf("p1.5\n");
   //lm75_write_config(I2C2, 0x48);
+  sc.init();
   printf("p2\n");
   rgb(0,1,0);
-  
   while(1)
   {
-  printf("p3\n");
+  printf("potat\n\r");
   //printf("temp1: %.3f\n",(lm75_read_temperature(I2C2, LM75_SENSOR0)>>5)/8.0);
   //printf("temp2: %.3f\n",(lm75temp()>>5)/8.0);
   //printf("temp2: %.3f\n",myBMP.getTemperature());
-  printf("time1: %d\n",ds.getSec());
+  //printf("time1: %d\n",ds.getSec());
   delay_ms(500);
   }
   

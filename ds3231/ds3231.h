@@ -11,6 +11,7 @@ class ds3231
   ds3231();
   
   int getSec(void);
+  int getMin(void);
   uint8_t readReg(uint8_t);
     
 };

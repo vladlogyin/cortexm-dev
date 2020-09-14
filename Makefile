@@ -1,5 +1,5 @@
-SOURCEFILES= ds3231/ds3231.cpp htu21d/htu21d.cpp lm75/lm75.cpp main.cpp systems.cpp BMP180/BMP180.cpp printf/printf.c
-HEADERFILES= ds3231/ds3231.h htu21d/htu21d.h lm75/lm75.h main.h systems.h BMP180/BMP180.h
+SOURCEFILES= ds3231/ds3231.cpp htu21d/htu21d.cpp lm75/lm75.cpp main.cpp systems.cpp BMP180/BMP180.cpp printf/printf.c ili9341/ili9341.cpp
+HEADERFILES= ds3231/ds3231.h htu21d/htu21d.h lm75/lm75.h main.h systems.h BMP180/BMP180.h printf/printf.h ili9341/ili9341.h
 # setup
 SFLAGS= --static -nostartfiles -std=c++11 -g3 -Os
 SFLAGS+= -fno-common -ffunction-sections -fdata-sections
