@@ -59,7 +59,6 @@
 #define ILI9341_PWCTR5 0xC4 ///< Power Control 5
 #define ILI9341_VMCTR1 0xC5 ///< VCOM Control 1
 #define ILI9341_VMCTR2 0xC7 ///< VCOM Control 2
-
 #define ILI9341_RDID1 0xDA ///< Read ID 1
 #define ILI9341_RDID2 0xDB ///< Read ID 2
 #define ILI9341_RDID3 0xDC ///< Read ID 3
@@ -90,14 +89,44 @@
 #define ILI9341_GREENYELLOW 0xAFE5 ///< 173, 255,  41
 #define ILI9341_PINK 0xFC18        ///< 255, 130, 198
 
-
+#define SCREEN_VERTICAL_1 0
+#define SCREEN_HORIZONTAL_1 1
+#define SCREEN_VERTICAL_2 2
+#define SCREEN_HORIZONTAL_2 3
 
 class ili9341{
   protected:
-    static const uint8_t initcmd[];
-  public:
-    void init(void);
+    uint32_t spiDev;
+    uint32_t portDC, pinDC;
+    uint32_t portCS, pinCS;
+    uint32_t portRST, pinRST;
     
+    //const static uint8_t lowercaseFont[26][5];
+    const static uint8_t uppercaseFont[26][5];
+    
+    void setAddressWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+    void sendCommand(uint8_t command,const uint8_t *data = nullptr, uint8_t n = 0);
+    uint8_t readCommand(uint8_t command, uint8_t ind = 0); //readCommand8
+    void writeCommand(uint8_t command);
+    void writeData(uint8_t data);
+    const static uint8_t initcmd[];
+  public:
+    uint16_t width;
+    uint16_t height;
+    ili9341();
+    ili9341(uint32_t spi, uint32_t portDC, uint32_t pinDC, uint32_t portCS, uint32_t pinCS, uint32_t portRST, uint32_t pinRST);
+    
+    void init(void);
+    void drawString(char *str, uint16_t x, uint16_t y, uint8_t s, uint16_t c);
+    void drawFont(uint8_t ch, uint16_t x, uint16_t y, uint8_t s, uint16_t c);
+    void drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t c);
+    void writePixel(uint16_t x, uint16_t y, uint16_t c);
+    void writeLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t c);
+    void fillRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t c);
+    void fillScreen(uint16_t c);
+    void setRotation(uint8_t rotation);
+    uint16_t rgb565(uint32_t rgb);
+    uint16_t rgb565(uint8_t r, uint8_t g, uint8_t b);
 };
 
 #endif
