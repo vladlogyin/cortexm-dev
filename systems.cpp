@@ -22,3 +22,15 @@ volatile void delay_us(uint32_t us) {
          : [num] "r" ((us*72-6)/6)
          : );
 }
+volatile void robust_delay(uint32_t gib)
+{
+int a=0,b=0;
+ for(int i=0;i<gib*3000;i++){a+=i;}
+ b=a;a=b;
+}
+volatile void robust_us(uint32_t gib)
+{
+int a=0,b=0;
+ for(int i=0;i<gib*3;i++){a+=i;}
+ b=a;a=b;
+}
