@@ -7,34 +7,33 @@ ili9341 sc;
 int main()
 {
 __asm(".global __use_no_semihosting\n\t");
-  //init_printf(NULL,tpfputc);
   clocksetup();
   gpiosetup();
   i2csetup();
   usartsetup();
   rgb(0,1,0);  
-  printf("p1\n");
-  /*while (!myBMP.begin());
-  {
-  delay_ms(50);
-  }*/
-  /*while (myHTU21D.begin() != true)
-  {
-    delay_ms(50);
-  }*/
-  printf("p1.5\n");
-  //lm75_write_config(I2C2, 0x48);
+  printf("p1\n\r");
   sc.init();
-  printf("p2\n");
+  printf("p2\n\r");
+  sc.fillScreen(ILI9341_BLACK);
   rgb(0,1,0);
+  int i=0,j=1;
+  
+  uint16_t cols[6]={ILI9341_WHITE, ILI9341_MAGENTA, ILI9341_RED, ILI9341_YELLOW,ILI9341_ORANGE,ILI9341_BLUE};
+  
   while(1)
   {
-  printf("potat\n\r");
-  //printf("temp1: %.3f\n",(lm75_read_temperature(I2C2, LM75_SENSOR0)>>5)/8.0);
-  //printf("temp2: %.3f\n",(lm75temp()>>5)/8.0);
-  //printf("temp2: %.3f\n",myBMP.getTemperature());
-  //printf("time1: %d\n",ds.getSec());
-  delay_ms(500);
+  i++;
+  j++;
+  if(i>5){i=0;}
+  if(j>5){j=0;}
+  
+  sc.fillScreen(cols[i]);
+  sc.fillRectangle(50,50,240-50,320-50,cols[j]);
+  sc.drawLine(60,60,240-60,320-60,cols[i]);
+  sc.writePixel(40,40,cols[j]);
+  sc.drawString("ABCDEFGH\nIJKLMNOP\nQRSTUVWX\nYZ",70,70,2,cols[i]);
+  robust_delay(500);
   }
   
   return 0;
