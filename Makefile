@@ -1,13 +1,13 @@
-SOURCEFILES= ds3231/ds3231.cpp htu21d/htu21d.cpp lm75/lm75.cpp main.cpp systems.cpp BMP180/BMP180.cpp printf/printf.c ili9341/ili9341.cpp
-HEADERFILES= ds3231/ds3231.h htu21d/htu21d.h lm75/lm75.h main.h systems.h BMP180/BMP180.h printf/printf.h ili9341/ili9341.h
+SOURCEFILES= ds3231/ds3231.cpp main.cpp systems.cpp printf/printf.c ili9341/ili9341.cpp
+HEADERFILES= ds3231/ds3231.h main.h systems.h printf/printf.h ili9341/ili9341.h
 # setup
-SFLAGS= --static -nostartfiles -std=c++11 -g3 -Os
+SFLAGS= --static -nostartfiles -std=c++11 -g3 -O0
 SFLAGS+= -fno-common -ffunction-sections -fdata-sections
 SFLAGS+= -I. -I./printf -I./libopencm3/include -L./libopencm3/lib 
 LFLAGS+=-Wl,--start-group -lgcc -lm --specs=nano.specs --specs=nosys.specs -Wl,--end-group
 M3_FLAGS= $(SFLAGS) -mcpu=cortex-m3 -mthumb -msoft-float
 LFLAGS_STM32=$(LFLAGS) $(SOURCEFILES) -T stm32basic.ld
-STM32F1_CFLAGS=$(M3_FLAGS) -O0 -DSTM32F1 -DLITTLE_BIT=200000 $(LFLAGS_STM32) -lopencm3_stm32f1
+STM32F1_CFLAGS=$(M3_FLAGS) -DSTM32F1 -DLITTLE_BIT=200000 $(LFLAGS_STM32) -lopencm3_stm32f1
 
 CC = arm-none-eabi-gcc
 #CFLAGS = $(COMPILE_OPTS) $(INCLUDE_DIRS)
