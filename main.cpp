@@ -32,7 +32,7 @@ __asm(".global __use_no_semihosting\n\t");
   sc.fillRectangle(50,50,240-50,320-50,cols[j]);
   sc.drawLine(60,60,240-60,320-60,cols[i]);
   sc.writePixel(40,40,cols[j]);
-  sc.drawString("ABCDEFGH\nIJKLMNOP\nQRSTUVWX\nYZ",70,70,2,cols[i]);
+  sc.drawString("abcdefgh\nijklmnop\nqrstuvwx\nyz",70,70,2,cols[i]);
   robust_delay(500);
   }
   
