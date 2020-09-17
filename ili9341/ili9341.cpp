@@ -202,10 +202,10 @@ ili9341::ili9341()
 
 ili9341::ili9341(uint32_t spi, uint32_t portDC, uint32_t pinDC, uint32_t portCS, uint32_t pinCS, uint32_t portRST, uint32_t pinRST)
 {
-  this.spiDev=spi;
-  this.portDC=portDC; this.pinDC=pinDC;
-  this.portCS=portCS; this.pinCS=pinCS;
-  this.portRST=portRST; this.pinRST=pinRST;
+  this->spiDev=spi;
+  this->portDC=portDC; this->pinDC=pinDC;
+  this->portCS=portCS; this->pinCS=pinCS;
+  this->portRST=portRST; this->pinRST=pinRST;
 }
 
 void ili9341::init()
