@@ -3,7 +3,7 @@
 //BMP180 myBMP(BMP180_ULTRAHIGHRES);//BMP180 
 //HTU21D myHTU21D(HTU21D_RES_RH12_TEMP14);
 ds3231 ds;
-ili9341 sc;
+ili9341 sc(SPI1,GPIOA,GPIO3,GPIOA,GPIO1,GPIOA,GPIO2);
 int main()
 {
 __asm(".global __use_no_semihosting\n\t");
@@ -29,11 +29,12 @@ __asm(".global __use_no_semihosting\n\t");
   if(j>5){j=0;}
   
   sc.fillScreen(cols[i]);
-  sc.fillRectangle(50,50,240-50,320-50,cols[j]);
-  sc.drawLine(60,60,240-60,320-60,cols[i]);
+  //sc.fillRectangle(50,50,240-50,320-50,cols[j]);
+  //sc.drawLine(60,60,240-60,320-60,cols[i]);
   sc.writePixel(40,40,cols[j]);
-  sc.drawString("abcdefgh\nijklmnop\nqrstuvwx\nyz",70,70,2,cols[i]);
-  robust_delay(500);
+  //char toWrite[]
+  sc.drawString("!\"#$%&'()*+,-./0\n123456789:;<=>?@\nABCDEFGHIJKLMNOP\nQRSTUVWXYZ[\\]^_`\nabcdefghijklmnop\nqrstuvwxyz{|}~",5,15,2,cols[j]);
+  robust_delay(5000);
   }
   
   return 0;
@@ -42,11 +43,18 @@ __asm(".global __use_no_semihosting\n\t");
 void clocksetup()
 {
   rcc_clock_setup_in_hse_8mhz_out_72mhz();
+  
+  rcc_periph_clock_enable(RCC_GPIOA);
+  rcc_periph_clock_enable(RCC_GPIOB);
+  rcc_periph_clock_enable(RCC_GPIOC);
+  
+  rcc_periph_clock_enable(RCC_AFIO);
+  rcc_periph_clock_enable(RCC_SPI1);
+  rcc_periph_clock_enable(RCC_I2C2);
+  rcc_periph_clock_enable(RCC_USART1);
 }
 void i2csetup()
 {
-  rcc_periph_clock_enable(RCC_I2C2);
-  rcc_periph_clock_enable(RCC_AFIO);
   gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ,
 		      GPIO_CNF_OUTPUT_ALTFN_OPENDRAIN,
 		      GPIO_I2C2_SCL | GPIO_I2C2_SDA);
@@ -81,8 +89,6 @@ void i2csetup()
 void gpiosetup()
 {
   
-  rcc_periph_clock_enable(RCC_GPIOB);
-  rcc_periph_clock_enable(RCC_GPIOC);
   gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO8);
   gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO9);
   gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
@@ -98,9 +104,6 @@ void rgb(uint8_t r,uint8_t g,uint8_t b)
 }
 void usartsetup(void)
 {
-	rcc_periph_clock_enable(RCC_GPIOA);
-	rcc_periph_clock_enable(RCC_AFIO);
-	rcc_periph_clock_enable(RCC_USART1);
 	/* Setup GPIO pin GPIO_USART1_RE_TX on GPIO port B for transmit. */
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ,
 		      GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART1_TX);

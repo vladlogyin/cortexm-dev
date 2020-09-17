@@ -101,8 +101,7 @@ class ili9341{
     uint32_t portCS, pinCS;
     uint32_t portRST, pinRST;
     
-    const static uint8_t lowercaseFont[26][5];
-    const static uint8_t uppercaseFont[26][5];
+    const static uint8_t drawableFont[94][5];
     
     void setAddressWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
     void sendCommand(uint8_t command,const uint8_t *data = nullptr, uint8_t n = 0);

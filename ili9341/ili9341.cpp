@@ -1,6 +1,38 @@
 #include <ili9341/ili9341.h>
-
-const uint8_t ili9341::uppercaseFont[26][5]={{0b00111111,0b01000100,0b01000100,0b01000100,0b00111111}, // A
+const uint8_t  ili9341::drawableFont[94][5]={
+                                             {0b00000000,0b00000000,0b01111101,0b00000000,0b00000000}, // !
+                                             {0b00000000,0b01110000,0b00000000,0b01110000,0b00000000}, // "
+                                             {0b00101000,0b01111111,0b00101000,0b01111111,0b00101000}, // #
+                                             {0b00010010,0b00101010,0b01101011,0b00101010,0b00100100}, // $
+                                             {0b01100010,0b01100100,0b00001000,0b00010011,0b00100011}, // %
+                                             {0b00110110,0b01001001,0b01010101,0b00100010,0b00000101}, // &
+                                             {0b00000000,0b01010000,0b01100000,0b00000000,0b00000000}, // '
+                                             {0b00000000,0b00011100,0b00100010,0b01000001,0b00000000}, // (
+                                             {0b00000000,0b01000001,0b00100010,0b00011100,0b00000000}, // )
+                                             {0b00010100,0b00001000,0b00111110,0b00001000,0b00010100}, // *
+                                             {0b00001000,0b00001000,0b00111110,0b00001000,0b00001000}, // +
+                                             {0b00000000,0b00000101,0b00000110,0b00000000,0b00000000}, // ,
+                                             {0b00001000,0b00001000,0b00001000,0b00001000,0b00001000}, // -
+                                             {0b00000000,0b00000110,0b00000110,0b00000000,0b00000000}, // .
+                                             {0b00000010,0b00000100,0b00001000,0b00010000,0b00100000}, // /
+                                             {0b00111110,0b01000101,0b01001001,0b01010001,0b00111110}, // 0
+                                             {0b00000000,0b00100001,0b01111111,0b00000001,0b00000000}, // 1
+                                             {0b00100001,0b01000010,0b01000101,0b01001001,0b00110001}, // 2
+                                             {0b01000010,0b01000001,0b01010001,0b01101001,0b01000110}, // 3
+                                             {0b00001100,0b00010100,0b00100100,0b01111111,0b00000100}, // 4
+                                             {0b01110010,0b01010001,0b01010001,0b01010001,0b01001110}, // 5
+                                             {0b00011110,0b00101001,0b01001001,0b01001001,0b00000110}, // 6
+                                             {0b01000000,0b01000111,0b01001000,0b01010000,0b01100000}, // 7
+                                             {0b00110110,0b01001001,0b01001001,0b01001001,0b00110110}, // 8
+                                             {0b00110000,0b01001001,0b01001001,0b01001010,0b00111100}, // 9
+                                             {0b00000000,0b00110110,0b00110110,0b00000000,0b00000000}, // :
+                                             {0b00000000,0b00110101,0b00110110,0b00000000,0b00000000}, // ;
+                                             {0b00001000,0b00010100,0b00100010,0b01000001,0b00000000}, // <
+                                             {0b00010100,0b00010100,0b00010100,0b00010100,0b00010100}, // =
+                                             {0b01000001,0b00100010,0b00010100,0b00001000,0b00000000}, // >
+                                             {0b00100000,0b01000000,0b01000101,0b01001000,0b00110000}, // ?
+                                             {0b00100110,0b01001001,0b01001111,0b01000001,0b00111110}, // @
+                                             {0b00111111,0b01000100,0b01000100,0b01000100,0b00111111}, // A
                                              {0b01111111,0b01001001,0b01001001,0b01001001,0b00110110}, // B
                                              {0b00111110,0b01000001,0b01000001,0b01000001,0b00100010}, // C
                                              {0b01111111,0b01000001,0b01000001,0b00100010,0b00011100}, // D
@@ -16,7 +48,7 @@ const uint8_t ili9341::uppercaseFont[26][5]={{0b00111111,0b01000100,0b01000100,0
                                              {0b01111111,0b00010000,0b00001000,0b00000100,0b01111111}, // N
                                              {0b00111110,0b01000001,0b01000001,0b01000001,0b00111110}, // O
                                              {0b01111111,0b01001000,0b01001000,0b01001000,0b00110000}, // P
-                                             {0b00111110,0b01000001,0b01000101,0b01000010,0b00100101}, // Q
+                                             {0b00111110,0b01000001,0b01000101,0b01000010,0b00111101}, // Q
                                              {0b01111111,0b01001000,0b01001100,0b01001010,0b00110001}, // R
                                              {0b00110001,0b01001001,0b01001001,0b01001001,0b01000110}, // S
                                              {0b01000000,0b01000000,0b01111111,0b01000000,0b01000000}, // T
@@ -25,9 +57,14 @@ const uint8_t ili9341::uppercaseFont[26][5]={{0b00111111,0b01000100,0b01000100,0
                                              {0b01111110,0b00000001,0b00001110,0b00000001,0b01111110}, // W
                                              {0b01100011,0b00010100,0b00001000,0b00010100,0b01100011}, // X
                                              {0b01110000,0b00001000,0b00000111,0b00001000,0b01110000}, // Y
-                                             {0b01000011,0b01000101,0b01001001,0b01010001,0b01100001}  // Z
-                                            };
-const uint8_t ili9341::lowercaseFont[26][5]={{0b00000010,0b00010101,0b00010101,0b00010101,0b00001111}, // a
+                                             {0b01000011,0b01000101,0b01001001,0b01010001,0b01100001}, // Z
+                                             {0b00000000,0b01111111,0b01000001,0b01000001,0b00000000}, // [
+                                             {0b00100000,0b00010000,0b00001000,0b00000100,0b00000010}, // 
+                                             {0b00000000,0b01000001,0b01000001,0b01111111,0b00000000}, // ]
+                                             {0b00010000,0b00100000,0b01000000,0b00100000,0b00010000}, // ^
+                                             {0b00000001,0b00000001,0b00000001,0b00000001,0b00000001}, // _
+                                             {0b00000000,0b01000000,0b00100000,0b00010000,0b00000000}, // `
+                                             {0b00000010,0b00010101,0b00010101,0b00010101,0b00001111}, // a
                                              {0b01111111,0b00001001,0b00010001,0b00010001,0b00001110}, // b
                                              {0b00001110,0b00010001,0b00010001,0b00010001,0b00000010}, // c
                                              {0b00001110,0b00010001,0b00010001,0b00001001,0b01111111}, // d
@@ -52,9 +89,12 @@ const uint8_t ili9341::lowercaseFont[26][5]={{0b00000010,0b00010101,0b00010101,0
                                              {0b00011110,0b00000001,0b00000110,0b00000001,0b00011110}, // w
                                              {0b00010001,0b00001010,0b00000100,0b00001010,0b00010001}, // x
                                              {0b00011000,0b00000101,0b00000101,0b00000101,0b00011110}, // y
-                                             {0b00010001,0b00010011,0b00010101,0b00011001,0b00010001}  // z
-                                            };
-
+                                             {0b00010001,0b00010011,0b00010101,0b00011001,0b00010001}, // z
+                                             {0b00000000,0b00001000,0b00110110,0b01000001,0b00000000}, // {
+                                             {0b00000000,0b00000000,0b01111111,0b00000000,0b00000000}, // |
+                                             {0b00000000,0b01000001,0b00110110,0b00001000,0b00000000}, // }
+                                             {0b00001000,0b00010000,0b00010000,0b00001000,0b00010000}  // ~
+                                             };
 void ili9341::drawString(char *str, uint16_t x, uint16_t y, uint8_t s, uint16_t c)
 {
   uint16_t x1=0;
@@ -81,13 +121,9 @@ void ili9341::drawFont(uint8_t ch, uint16_t x, uint16_t y, uint8_t s, uint16_t c
     
     uint8_t b=0xFF;
     
-    if(ch>='A'&&ch<='Z')
+    if(ch>='!'&&ch<='~')
     {
-    b=uppercaseFont[ch-'A'][x1];
-    }
-    else if(ch>='a'&&ch<='z')
-    {
-    b=lowercaseFont[ch-'a'][x1];
+    b=drawableFont[ch-'!'][x1];
     }
     
     while(b){
@@ -164,39 +200,45 @@ ili9341::ili9341()
 
 }
 
+ili9341::ili9341(uint32_t spi, uint32_t portDC, uint32_t pinDC, uint32_t portCS, uint32_t pinCS, uint32_t portRST, uint32_t pinRST)
+{
+  this.spiDev=spi;
+  this.portDC=portDC; this.pinDC=pinDC;
+  this.portCS=portCS; this.pinCS=pinCS;
+  this.portRST=portRST; this.pinRST=pinRST;
+}
+
 void ili9341::init()
 {
-
-  // Enable SPI1 peripheral and GPIO clocks
-  rcc_periph_clock_enable(RCC_GPIOA);
-  rcc_periph_clock_enable(RCC_AFIO);
-  rcc_periph_clock_enable(RCC_SPI1);
   // Configure GPIOs
   gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO5 | GPIO7);
-  gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO3 | GPIO2 | GPIO1); //register/data selection, reset pin, CS pin
   gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO6);
   
+  gpio_set_mode(portDC, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, pinDC);
+  gpio_set_mode(portRST, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, pinRST);
+  gpio_set_mode(portCS, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, pinCS);
+  
   // Reset SPI, SPI_CR1 register cleared, SPI is disabled
-  spi_reset(SPI1);
+  spi_reset(spiDev);
   
-  spi_init_master(SPI1, SPI_CR1_BAUDRATE_FPCLK_DIV_2, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
+  spi_init_master(spiDev, SPI_CR1_BAUDRATE_FPCLK_DIV_2, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
                   SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
-  //spi_set_standard_mode(SPI1,0);
-  spi_enable_software_slave_management(SPI1);
-  spi_set_nss_high(SPI1);
+  //spi_set_standard_mode(spiDev,0);
+  spi_enable_software_slave_management(spiDev);
+  spi_set_nss_high(spiDev);
   
-  // Enable SPI1 peripheral
-  spi_enable(SPI1);
+  // Enable spiDev peripheral
+  spi_enable(spiDev);
   
   // Hardware reset
-  gpio_set(GPIOA, GPIO2);
+  gpio_set(portRST, pinRST);
   robust_delay(100);
-  gpio_clear(GPIOA, GPIO2);
+  gpio_clear(portRST, pinRST);
   robust_delay(100);
-  gpio_set(GPIOA, GPIO2);
+  gpio_set(portRST, pinRST);
   //// Software reset
-  //gpio_clear(GPIOA, GPIO3);
-  //spi_xfer(SPI1,ILI9341_SWRESET);
+  //gpio_clear(portDC, pinDC);
+  //spi_xfer(spiDev,ILI9341_SWRESET);
   robust_delay(100);
   
   for(int i=0;initcmd[i];)
@@ -220,15 +262,15 @@ void ili9341::fillRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, 
   if ((x1<=x2) && (y1<=y2) && (x1 >= 0) && (x2 < width) && (y1 >= 0) && (y2 < height))
   {
     setAddressWindow(x1, y1, x2, y2);
-    gpio_set(GPIOA, GPIO3); // DC data high
+    gpio_set(portDC, pinDC); // DC data high
     //robust_us(1);
-    gpio_clear(GPIOA, GPIO1); // CS active low
+    gpio_clear(portCS, pinCS); // CS active low
     //robust_us(1);
     for(int i=(x2-x1+1)*(y2-y1+1);i--;)
     {
-      spi_send(SPI1, c>>8); spi_send(SPI1, c); //SPI_WRITE16(c);
+      spi_send(spiDev, c>>8); spi_send(spiDev, c); //SPI_WRITE16(c);
     }
-    gpio_set(GPIOA, GPIO1); // CS inactive high
+    gpio_set(portCS, pinCS); // CS inactive high
    // robust_us(1);
   }
 }
@@ -237,12 +279,12 @@ void ili9341::writePixel(uint16_t x, uint16_t y, uint16_t c)
   if ((x >= 0) && (x < width) && (y >= 0) && (y < height)) {
     setAddressWindow(x, y, x + 1, y + 1);
     
-    gpio_set(GPIOA, GPIO3); // DC data high
+    gpio_set(portDC, pinDC); // DC data high
     robust_us(1);
-    gpio_clear(GPIOA, GPIO1); // CS active low
+    gpio_clear(portCS, pinCS); // CS active low
     robust_us(1);
-    spi_xfer(SPI1, c>>8); spi_xfer(SPI1, c); //SPI_WRITE16(c);
-    gpio_set(GPIOA, GPIO1); // CS inactive high
+    spi_xfer(spiDev, c>>8); spi_xfer(spiDev, c); //SPI_WRITE16(c);
+    gpio_set(portCS, pinCS); // CS inactive high
     robust_us(1);
   }
 
@@ -265,57 +307,57 @@ void ili9341::sendCommand(uint8_t command,const uint8_t *data, uint8_t n)
 {
   //assume 8 bit bus width
   
-  gpio_clear(GPIOA, GPIO1); // CS active low
+  gpio_clear(portCS, pinCS); // CS active low
   robust_us(1);
-  gpio_clear(GPIOA, GPIO3); // DC command low
+  gpio_clear(portDC, pinDC); // DC command low
   robust_us(1);
-  spi_xfer(SPI1, command);
+  spi_xfer(spiDev, command);
   
-  gpio_set(GPIOA, GPIO3); // DC data high
+  gpio_set(portDC, pinDC); // DC data high
   robust_us(1);
   for(int i=0;i<n;i++) {
-    spi_xfer(SPI1, data[i]);
+    spi_xfer(spiDev, data[i]);
   }
   
-  gpio_set(GPIOA, GPIO1); // CS inactive high
+  gpio_set(portCS, pinCS); // CS inactive high
   robust_us(1);
 }
 
 uint8_t ili9341::readCommand(uint8_t command, uint8_t ind) //readCommand8
 {
   uint8_t res=0;
-  gpio_clear(GPIOA, GPIO3); // DC command low
+  gpio_clear(portDC, pinDC); // DC command low
   robust_us(1);
-  gpio_clear(GPIOA, GPIO1); // CS active low
+  gpio_clear(portCS, pinCS); // CS active low
   robust_us(1);
-  spi_xfer(SPI1, command);
-  gpio_set(GPIOA, GPIO3); // DC data high
+  spi_xfer(spiDev, command);
+  gpio_set(portDC, pinDC); // DC data high
   robust_us(1);
   do {
-    res=spi_read(SPI1);
+    res=spi_read(spiDev);
   } while (ind--); // Discard bytes up to indth byte
-  gpio_set(GPIOA, GPIO1); // CS inactive high
+  gpio_set(portCS, pinCS); // CS inactive high
   robust_us(1);
   return res;
 }
 void ili9341::writeCommand(uint8_t command)
 {
-  gpio_clear(GPIOA, GPIO3); // DC command low
+  gpio_clear(portDC, pinDC); // DC command low
   robust_us(1);
-  gpio_clear(GPIOA, GPIO1); // CS active low
+  gpio_clear(portCS, pinCS); // CS active low
   robust_us(1);
-  spi_xfer(SPI1, command);
-  gpio_set(GPIOA, GPIO1); // CS inactive high
+  spi_xfer(spiDev, command);
+  gpio_set(portCS, pinCS); // CS inactive high
   robust_us(1);
 }
 void ili9341::writeData(uint8_t data)
 {
-  gpio_set(GPIOA, GPIO3); // DC data high
+  gpio_set(portDC, pinDC); // DC data high
   robust_us(1);
-  gpio_clear(GPIOA, GPIO1); // CS active low
+  gpio_clear(portCS, pinCS); // CS active low
   robust_us(1);
-  spi_xfer(SPI1, data);
-  gpio_set(GPIOA, GPIO1); // CS inactive high
+  spi_xfer(spiDev, data);
+  gpio_set(portCS, pinCS); // CS inactive high
   robust_us(1);
 }
 
