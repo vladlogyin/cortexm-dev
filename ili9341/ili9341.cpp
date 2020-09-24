@@ -211,8 +211,6 @@ ili9341::ili9341(uint32_t spi, uint32_t portDC, uint32_t pinDC, uint32_t portCS,
 void ili9341::init()
 {
   // Configure GPIOs
-  gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO5 | GPIO7);
-  gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO6);
   
   gpio_set_mode(portDC, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, pinDC);
   gpio_set_mode(portRST, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, pinRST);
