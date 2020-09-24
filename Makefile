@@ -1,5 +1,5 @@
-SOURCEFILES= ds3231/ds3231.cpp main.cpp systems.cpp printf/printf.c ili9341/ili9341.cpp
-HEADERFILES= ds3231/ds3231.h main.h systems.h printf/printf.h ili9341/ili9341.h
+SOURCEFILES= rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systems.cpp printf/printf.c ili9341/ili9341.cpp
+HEADERFILES= rc522/rc522.h ds3231/ds3231.h max7219/max7219.h main.h systems.h printf/printf.h ili9341/ili9341.h
 # setup
 SFLAGS= --static -nostartfiles -std=c++11 -g3 -O0
 SFLAGS+= -fno-common -ffunction-sections -fdata-sections
