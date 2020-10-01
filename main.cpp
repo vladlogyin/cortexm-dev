@@ -1,9 +1,37 @@
 #include <main.h>
 //#define printf(x) (void)(x)
-//BMP180 myBMP(BMP180_ULTRAHIGHRES);//BMP180 
-//HTU21D myHTU21D(HTU21D_RES_RH12_TEMP14);
-ds3231 ds;
+//ds3231 ds;
 ili9341 sc(SPI1,GPIOA,GPIO3,GPIOA,GPIO1,GPIOA,GPIO2);
+max7219 dp(SPI1,GPIOA,GPIO3);
+rc522 rc(SPI1,GPIOA,GPIO3,GPIOA,GPIO2);
+uint8_t newUID[4] = {16, 90, 174, 45};
+char* statusString(uint8_t s)
+{
+  switch(s)
+  {
+    case RC522_STATUS_OK:
+      return "STATUS_OK";
+    case RC522_STATUS_ERROR:
+      return "STATUS_ERROR";
+    case RC522_STATUS_COLLISION:
+      return "STATUS_COLLISION";
+    case RC522_STATUS_TIMEOUT:
+      return "STATUS_TIMEOUT";
+    case RC522_STATUS_NO_ROOM:
+      return "STATUS_NO_ROOM";
+    case RC522_STATUS_INTERNAL_ERROR:
+      return "STATUS_INTERNAL_ERROR";
+    case RC522_STATUS_INVALID:
+      return "STATUS_INVALID";
+    case RC522_STATUS_CRC_WRONG:
+      return "STATUS_CRC_WRONG";
+    case RC522_STATUS_MIFARE_NACK:
+      return "STATUS_MIFARE_NACK";
+    default:
+      return "unknown status";
+  }
+  return "error";
+}
 int main()
 {
 __asm(".global __use_no_semihosting\n\t");
@@ -11,30 +39,43 @@ __asm(".global __use_no_semihosting\n\t");
   gpiosetup();
   i2csetup();
   usartsetup();
+  spisetup();
   rgb(0,1,0);  
   printf("p1\n\r");
-  sc.init();
+  //sc.init();
+  //dp.init();
+  rc.init();
   printf("p2\n\r");
-  sc.fillScreen(ILI9341_BLACK);
   rgb(0,1,0);
-  int i=0,j=1;
   
   uint16_t cols[6]={ILI9341_WHITE, ILI9341_MAGENTA, ILI9341_RED, ILI9341_YELLOW,ILI9341_ORANGE,ILI9341_BLUE};
-  
+  int j=0;
+  //sc.fillScreen(ILI9341_BLACK);
   while(1)
   {
-  i++;
-  j++;
-  if(i>5){i=0;}
-  if(j>5){j=0;}
-  
-  sc.fillScreen(cols[i]);
-  //sc.fillRectangle(50,50,240-50,320-50,cols[j]);
-  //sc.drawLine(60,60,240-60,320-60,cols[i]);
-  sc.writePixel(40,40,cols[j]);
-  //char toWrite[]
-  sc.drawString("!\"#$%&'()*+,-./0\n123456789:;<=>?@\nABCDEFGHIJKLMNOP\nQRSTUVWXYZ[\\]^_`\nabcdefghijklmnop\nqrstuvwxyz{|}~",5,15,2,cols[j]);
-  robust_delay(5000);
+  robust_delay(10);
+  if(!rc.PICCIsNewCardPresent())
+  {
+    continue;
+  }
+  if(rc.PICCReadCardSerial())
+  {
+    printf("curernt uid: %d %d %d %d\n\r", rc.uid.uidByte[0], rc.uid.uidByte[1], rc.uid.uidByte[2], rc.uid.uidByte[3]);
+    if ( rc.uid.uidByte[0] != newUID[0])
+    {
+      printf("Try to write to card\n\r");
+      if ( rc.PICCSetUID(newUID, 4) ) {
+        printf("Wrote new UID to card.\n\r");
+      }
+      else
+      {
+        
+      }
+      rc.PICCHaltA();
+    }
+    continue;
+  }
+  robust_delay(10);
   }
   
   return 0;
@@ -52,6 +93,9 @@ void clocksetup()
   rcc_periph_clock_enable(RCC_SPI1);
   rcc_periph_clock_enable(RCC_I2C2);
   rcc_periph_clock_enable(RCC_USART1);
+  
+  gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO5 | GPIO7);
+  gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO6);
 }
 void i2csetup()
 {
@@ -92,6 +136,11 @@ void gpiosetup()
   gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO8);
   gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO9);
   gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
+}
+void spisetup()
+{
+  gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO5 | GPIO7);
+  gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO6);
 }
 void rgb(uint8_t r,uint8_t g,uint8_t b)
 {
