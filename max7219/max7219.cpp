@@ -1,7 +1,7 @@
 #include <max7219/max7219.h>
 
-//const uint8_t max7219::digitFont[10] = {0b00000001,0b00000010,0b00000100,0b00001000,0b00010000,0b00100000,0b01000000,0b10000000};
-const uint8_t max7219::digitFont[10] = {0b01111110,0b00110000,0b01101101,0b01111001,0b00110011,0b01011011,0b01011111,0b01110000,0b01111111,0b01111011};
+//const uint8_t max7219::digitFont[10] = {0b00000001,0b00000010,0b00000100,0b00001000,0b00010000,0b00100000,0b01000000,0b10000000,0b00000000,0b00000000};
+const uint8_t max7219::digitFont[16] = {0b01111110,0b00110000,0b01101101,0b01111001,0b00110011,0b01011011,0b01011111,0b01110000,0b01111111,0b01111011,0b01110111,0b00011111,0b01001110,0b00111101,0b01001111,0b01000111};
 
 max7219::max7219(uint32_t spiDev, uint32_t portCS, uint32_t pinCS)
 {
@@ -30,6 +30,22 @@ void max7219::init()
   spiTransfer(0, MAX7219_SHUTDOWN, 1);
   
 }
+
+void max7219::printInt(uint8_t address, int64_t num, uint8_t pos, uint8_t minlength)
+{
+  for(int i = 0; num | i < minlength; num /= 10)
+  {
+    setRow(address, pos + (i++), digitFont[num % 10]);
+  }
+}
+void max7219::printHex(uint8_t address, uint64_t num, uint8_t pos, uint8_t minlength)
+{
+  for(int i = 0; num | i < minlength; num = num >> 4)
+  {
+    setRow(address,pos + (i++), digitFont[num & 0xF]);
+  }
+}
+
 void max7219::setRow(uint8_t address, uint8_t row, uint8_t value)
 {
   spiTransfer(address, MAX7219_DIGIT0+row, value);
@@ -42,7 +58,7 @@ void max7219::setColumn(uint8_t address, uint8_t row, uint8_t value)
 
 void max7219::setScanLimit(uint8_t address, uint8_t limit)
 {
-
+  spiTransfer(address, MAX7219_SCANLIMIT, limit);
 }
 
 void max7219::setIntensity(uint8_t address, uint8_t intensity)
@@ -63,3 +79,4 @@ void max7219::spiTransfer(uint8_t address, uint8_t opcode, uint8_t data)
   //while (!(SPI_SR(spiDev) & SPI_SR_TXE));
   gpio_set(portCS, pinCS);
 }
+

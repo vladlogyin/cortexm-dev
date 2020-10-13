@@ -26,7 +26,7 @@
 
 class max7219{
   public://protected:
-    const static uint8_t digitFont[10];
+    const static uint8_t digitFont[16];
   
     uint32_t portCS;
     uint32_t pinCS;
@@ -41,6 +41,8 @@ class max7219{
     void setIntensity(uint8_t address, uint8_t intensity);
     void setScanLimit(uint8_t address, uint8_t limit);
     void clearDisplay(uint8_t address);
+    void printInt(uint8_t address, int64_t num, uint8_t pos=0, uint8_t minlength=0);
+    void printHex(uint8_t address, uint64_t num, uint8_t pos=0, uint8_t minlength=0);
     
 };
 
