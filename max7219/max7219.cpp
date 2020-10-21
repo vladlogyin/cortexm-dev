@@ -33,11 +33,39 @@ void max7219::init()
 
 void max7219::printInt(uint8_t address, int64_t num, uint8_t pos, uint8_t minlength)
 {
-  for(int i = 0; num | i < minlength; num /= 10)
+  bool hasSign = num<0;
+  num = abs(num);
+  uint8_t i;
+  for(i = 0; num | i < minlength; num /= 10)
   {
     setRow(address, pos + (i++), digitFont[num % 10]);
   }
+  if(hasSign)
+  {
+    setRow(address, pos + i, 0b00000001);
+  }
 }
+
+void max7219::printFloat(uint8_t address, float num, uint8_t pos, uint8_t decimals)
+{
+  bool hasSign = num<0;
+  for(uint8_t j = decimals; j;j--)
+  {
+    num = num * 10;
+  }
+  num = abs(num);
+  int64_t n = (int64_t)num;
+  uint8_t i;
+  for(i = 0; n; n /= 10)
+  {
+    setRow(address, pos + (i++), digitFont[n % 10] | (i != decimals ? 0 : 0b10000000));
+  }
+  if(hasSign)
+  {
+    setRow(address, pos + i, 0b00000001);
+  }
+}
+
 void max7219::printHex(uint8_t address, uint64_t num, uint8_t pos, uint8_t minlength)
 {
   for(int i = 0; num | i < minlength; num = num >> 4)
