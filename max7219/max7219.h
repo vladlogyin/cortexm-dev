@@ -41,9 +41,9 @@ class max7219{
     void setIntensity(uint8_t address, uint8_t intensity);
     void setScanLimit(uint8_t address, uint8_t limit);
     void clearDisplay(uint8_t address);
-    void printInt(uint8_t address, int64_t num, uint8_t pos=0, uint8_t minlength=0);
-    void printHex(uint8_t address, uint64_t num, uint8_t pos=0, uint8_t minlength=0);
-    
+    void printInt(uint8_t address, int64_t num, uint8_t pos = 0, uint8_t minlength = 0);
+    void printHex(uint8_t address, uint64_t num, uint8_t pos = 0, uint8_t minlength = 0);
+    void printFloat(uint8_t address, float num, uint8_t pos = 0, uint8_t decimals = 3);
 };
 
 #endif
