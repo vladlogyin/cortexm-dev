@@ -96,7 +96,10 @@ void max7219::setIntensity(uint8_t address, uint8_t intensity)
 
 void max7219::clearDisplay(uint8_t address)
 {
-
+  for(uint8_t i = 7; i; i--)
+  {
+    setRow(address,i,0);
+  }
 }
 
 void max7219::spiTransfer(uint8_t address, uint8_t opcode, uint8_t data)
