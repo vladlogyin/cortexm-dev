@@ -24,8 +24,9 @@
 #define MAX7219_SHUTDOWN    12
 #define MAX7219_DISPLAYTEST 15
 
-class max7219{
-  public://protected:
+class max7219
+{
+  protected:
     const static uint8_t digitFont[16];
   
     uint32_t portCS;
@@ -33,7 +34,7 @@ class max7219{
     uint32_t spiDev;
     void spiTransfer(uint8_t address, uint8_t opcode, uint8_t data);
   
-  //public:
+  public:
     max7219(uint32_t spiDev, uint32_t portCS, uint32_t pinCS);
     void init();
     void setRow(uint8_t address, uint8_t row, uint8_t value);
