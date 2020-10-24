@@ -58,7 +58,7 @@ void max7219::printFloat(uint8_t address, float num, uint8_t pos, uint8_t decima
   uint8_t i;
   for(i = 0; n; n /= 10)
   {
-    setRow(address, pos + (i++), digitFont[n % 10] | (i != decimals ? 0 : 0b10000000));
+    setRow(address, pos + (i++), digitFont[n % 10] | (i-1 != decimals ? 0 : 0b10000000));
   }
   if(hasSign)
   {
