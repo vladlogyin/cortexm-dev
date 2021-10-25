@@ -1,7 +1,7 @@
 #!/bin/sh
 COMPILER="gcc g++ as ld objcopy objdump"
 TOOLS="gdb openocd"
-checkbinaries()
+check_binaries()
 {
  error=0
   for compiler in $COMPILER
@@ -28,7 +28,26 @@ checkbinaries()
     done
     return $error
 }
-
+do_pacman_install()
+{
+  # Check if sudo is installed
+  which sudo
+  if [ $? -eq 0 ]; then
+    # Trigger database update
+    sudo pacman -Syy
+    sudo pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-gdb arm-none-eabi-newlib openocd
+    return $?
+  else if [ $(id -u) -eq 0 ]; then
+    # We're root, so we can still proceed
+    pacman -Syy
+    pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-gdb arm-none-eabi-newlib openocd
+    return $?
+  else
+    # We can't really do anything except complain
+    echo "You need to be root or have sudo set up for this script to automatically install the required packages"
+    return 1
+  fi
+}
 
 echo Checking toolchain for $1
 
@@ -39,13 +58,39 @@ case $1 in
   Linux)
     # Check if all required compiler binaries can be found
     CROSS="arm-none-eabi-"
-    checkbinaries
+    check_binaries
     if [ $? -eq 0 ]; then
       echo "Toolchain binaries are present"
     else
-      # Change this to actually try to install a toolchain
-      echo "Something went wrong! Toolchain binaries are not present"
-      exit 3
+      # Try to figure out which distro we're on in order to attempt to install the right packages
+      which lsb_release
+      if [ $? -eq 0 ]; then
+        DISTRO=$(lsb_release -is)
+        case $DISTRO in
+          "LinuxMint"|"Mint")
+          ;;&
+          "Ubuntu")
+          ;;&
+          "Debian")
+            # Almost all debian derivatives use aptitude as their package manager
+            do_apt_install
+          ;;
+          "Gentoo")
+            do_portage_install
+          ;;
+          "Artix"|"artix"|"artixlinux"|"Artix release"|"Artix Linux")
+          ;;&
+          "ManjaroLinux")
+          ;;&
+          "Arch"|"archlinux"|"arch"|"Arch Linux")
+           # Almost all arch derivatives use pacman as their package manager
+            do_pacman_install
+          ;;
+        esac
+      else
+        echo "poop"
+      fi
+      
     fi
   ;;
   Darwin)
@@ -74,7 +119,7 @@ case $1 in
     # This should create a functioning install of gcc as arm-none-eabi-*
     # Check this is actually true
     CROSS="arm-none-eabi-"
-    checkbinaries
+    check_binaries
     if [ $? -eq 0 ]; then
       echo "Toolchain binaries are present"
     else
