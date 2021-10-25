@@ -18,7 +18,7 @@ checkbinaries()
     # Check if all other tool binaries can be found
     for tool in $TOOLS
     do
-      TOOLPATH=$(which $CROSS$compiler 2>/dev/null)
+      TOOLPATH=$(which tool 2>/dev/null)
       if [ $? -eq 0 ]; then
         echo "$tool found: $TOOLPATH"
       else
