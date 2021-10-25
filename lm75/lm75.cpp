@@ -101,7 +101,7 @@ uint16_t lm75temp()
 	uint8_t asd[2];
 	uint8_t reg = 0x0;
 	//i2c_read7_v1(I2C2,0x48,asd,2);
-	i2c_transfer7(I2C2,0x48,&reg,1,asd,2);
+	i2c_transfer7(I2C2,0b1001111,&reg,1,asd,2);
 	return (uint16_t)(asd[0]<<8)|asd[1];
 }
 uint16_t lm75_read_temperature(uint32_t i2c, uint8_t sensor)
@@ -173,4 +173,26 @@ uint16_t lm75_read_temperature(uint32_t i2c, uint8_t sensor)
 	I2C_CR1(i2c) &= ~I2C_CR1_POS;
 
 	return temperature;
+}
+
+lm75::lm75(uint32_t i2cDev, uint8_t address)
+{
+  this->i2cDev = i2cDev;
+  this->address = address;
+}
+
+uint8_t lm75::init()
+{
+  uint8_t data[2] = {LM75_CONFIG, 0x4};
+}
+float lm75::readTemperature(uint8_t keep)
+{
+  uint8_t data[2];
+  uint8_t reg = 0x0;
+  i2c_transfer7(i2cDev,address,&reg,1,data,2);
+  return ((int16_t)((data[0]<<8)|(data[1]&keep)))/256.0;
+}
+void setOS(float temperature,float hysteresis)
+{
+  
 }

@@ -1,40 +1,12 @@
 #include <main.h>
 //#define printf(x) (void)(x)
-//ds3231 ds;
-ili9341 sc(SPI1,GPIOA,GPIO3,GPIOA,GPIO1,GPIOA,GPIO2);
-max7219 dp(SPI1,GPIOA,GPIO3);
-rc522 rc(SPI1,GPIOA,GPIO3,GPIOA,GPIO2);
+max7219 dp(SPI1,GPIOB,GPIO0);
+bme280 bm(I2C2,0x76);
 uint8_t newUID[4] = {16, 90, 174, 45};
-char* statusString(uint8_t s)
-{
-  switch(s)
-  {
-    case RC522_STATUS_OK:
-      return "STATUS_OK";
-    case RC522_STATUS_ERROR:
-      return "STATUS_ERROR";
-    case RC522_STATUS_COLLISION:
-      return "STATUS_COLLISION";
-    case RC522_STATUS_TIMEOUT:
-      return "STATUS_TIMEOUT";
-    case RC522_STATUS_NO_ROOM:
-      return "STATUS_NO_ROOM";
-    case RC522_STATUS_INTERNAL_ERROR:
-      return "STATUS_INTERNAL_ERROR";
-    case RC522_STATUS_INVALID:
-      return "STATUS_INVALID";
-    case RC522_STATUS_CRC_WRONG:
-      return "STATUS_CRC_WRONG";
-    case RC522_STATUS_MIFARE_NACK:
-      return "STATUS_MIFARE_NACK";
-    default:
-      return "unknown status";
-  }
-  return "error";
-}
+
 int main()
 {
-__asm(".global __use_no_semihosting\n\t");
+  __asm(".global __use_no_semihosting\n\t");
   clocksetup();
   gpiosetup();
   i2csetup();
@@ -42,41 +14,67 @@ __asm(".global __use_no_semihosting\n\t");
   spisetup();
   rgb(0,1,0);  
   printf("p1\n\r");
-  //sc.init();
-  //dp.init();
-  rc.init();
+  lm75_write_config(I2C2,0b1001111);
+  dp.init();
+  //rc.init();
+  
   printf("p2\n\r");
   rgb(0,1,0);
   
-  uint16_t cols[6]={ILI9341_WHITE, ILI9341_MAGENTA, ILI9341_RED, ILI9341_YELLOW,ILI9341_ORANGE,ILI9341_BLUE};
-  int j=0;
-  //sc.fillScreen(ILI9341_BLACK);
+  /*rcc_periph_clock_enable(RCC_TIM3);
+  rcc_periph_reset_pulse(RST_TIM3);
+  timer_set_mode(TIM3, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+  timer_set_prescaler(TIM3, 0);
+  timer_set_repetition_counter(TIM3, 0);
+  timer_enable_preload(TIM3);
+  timer_continuous_mode(TIM3);
+  timer_set_period(TIM3, rcc_apb2_frequency*2 / 32000);
+  
+  timer_set_deadtime(TIM3, 10);
+	timer_set_enabled_off_state_in_idle_mode(TIM3);
+	timer_set_enabled_off_state_in_run_mode(TIM3);
+	timer_disable_break(TIM3);
+	timer_set_break_polarity_high(TIM3);
+	timer_disable_break_automatic_output(TIM3);
+	timer_set_break_lock(TIM3, TIM_BDTR_LOCK_OFF);
+	
+	timer_disable_oc_clear(TIM1, TIM_OC3);
+	timer_enable_oc_preload(TIM1, TIM_OC3);
+	timer_set_oc_slow_mode(TIM1, TIM_OC3);
+	timer_set_oc_mode(TIM1, TIM_OC3, TIM_OCM_PWM1);
+	
+	timer_set_oc_polarity_high(TIM1, TIM_OC3);
+	timer_set_oc_idle_state_set(TIM1, TIM_OC3);
+	timer_set_oc_polarity_high(TIM1, TIM_OC3N);
+	timer_set_oc_idle_state_set(TIM1, TIM_OC3N);
+	
+	timer_set_oc_value(TIM1, TIM_OC3, rcc_apb2_frequency / 32000);
+	
+	timer_enable_oc_output(TIM1, TIM_OC3);
+	timer_enable_oc_output(TIM1, TIM_OC3N);
+	
+	timer_enable_preload(TIM1);
+	
+	timer_enable_break_main_output(TIM1);
+	
+	timer_enable_counter(TIM1);*/
+  int i =0;
+  dp.clearDisplay(0);
+  
+    dp.printHex(0,bm.init(),0);
+    robust_delay(1000);
   while(1)
   {
-  robust_delay(10);
-  if(!rc.PICCIsNewCardPresent())
-  {
-    continue;
+  
+    dp.clearDisplay(0);
+    //bm.takeForcedMeasurement();
+    dp.printFloat(0,bm.readTemperature(),0);
+    dp.printFloat(0,bm.readHumidity(),4);
+    //dp.printFloat(0,(lm75temp()/256.0),4);
+    robust_delay(100);
   }
-  if(rc.PICCReadCardSerial())
-  {
-    printf("curernt uid: %d %d %d %d\n\r", rc.uid.uidByte[0], rc.uid.uidByte[1], rc.uid.uidByte[2], rc.uid.uidByte[3]);
-    if ( rc.uid.uidByte[0] != newUID[0])
-    {
-      printf("Try to write to card\n\r");
-      if ( rc.PICCSetUID(newUID, 4) ) {
-        printf("Wrote new UID to card.\n\r");
-      }
-      else
-      {
-        
-      }
-      rc.PICCHaltA();
-    }
-    continue;
-  }
-  robust_delay(10);
-  }
+  
+  
   
   return 0;
 }
