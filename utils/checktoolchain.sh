@@ -16,13 +16,13 @@ checkbinaries()
     done
     
     # Check if all other tool binaries can be found
-    for tool in $COMPILER
+    for tool in $TOOLS
     do
       TOOLPATH=$(which $CROSS$compiler 2>/dev/null)
       if [ $? -eq 0 ]; then
-        echo "$CROSS$compiler found: $TOOLPATH"
+        echo "$tool found: $TOOLPATH"
       else
-        echo "$CROSS$compiler not found"
+        echo "$tools not found"
         error=1
       fi
     done
