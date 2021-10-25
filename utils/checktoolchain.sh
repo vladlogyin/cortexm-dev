@@ -20,7 +20,7 @@ checkbinaries()
     do
       TOOLPATH=$(which tool 2>/dev/null)
       if [ $? -eq 0 ]; then
-        echo "$tool found: $TOOLPATH"
+        echo "$tools found: $TOOLPATH"
       else
         echo "$tools not found"
         error=1
