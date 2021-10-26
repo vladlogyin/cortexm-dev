@@ -37,7 +37,7 @@ do_pacman_install()
     sudo pacman -Syy
     sudo pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-gdb arm-none-eabi-newlib openocd
     return $?
-  else if [ $(id -u) -eq 0 ]; then
+  elif [ $(id -u) -eq 0 ]; then
     # We're root, so we can still proceed
     pacman -Syy
     pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-gdb arm-none-eabi-newlib openocd
