@@ -1,7 +1,7 @@
 #ifndef MAX7219_H
 #define MAX7219_H
 
-#include <systems.h>
+#include <systemutils.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>

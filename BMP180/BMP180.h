@@ -50,7 +50,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/i2c.h>
-#include <systems.h>
+#include <systemutils.h>
 /* resolutions */
 typedef enum : uint8_t
 {
