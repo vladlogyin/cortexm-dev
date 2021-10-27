@@ -1,88 +1,31 @@
 #include <main.h>
-//#define printf(x) (void)(x)
-max7219 dp(SPI1,GPIOB,GPIO0);
-bme280 bm(I2C2,0x76);
-uint8_t newUID[4] = {16, 90, 174, 45};
 
 int main()
 {
   __asm(".global __use_no_semihosting\n\t");
   clocksetup();
   gpiosetup();
-  i2csetup();
-  usartsetup();
-  spisetup();
-  rgb(0,1,0);  
-  printf("p1\n\r");
-  lm75_write_config(I2C2,0b1001111);
-  dp.init();
-  //rc.init();
-  
-  printf("p2\n\r");
-  rgb(0,1,0);
-  
-  /*rcc_periph_clock_enable(RCC_TIM3);
-  rcc_periph_reset_pulse(RST_TIM3);
-  timer_set_mode(TIM3, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-  timer_set_prescaler(TIM3, 0);
-  timer_set_repetition_counter(TIM3, 0);
-  timer_enable_preload(TIM3);
-  timer_continuous_mode(TIM3);
-  timer_set_period(TIM3, rcc_apb2_frequency*2 / 32000);
-  
-  timer_set_deadtime(TIM3, 10);
-	timer_set_enabled_off_state_in_idle_mode(TIM3);
-	timer_set_enabled_off_state_in_run_mode(TIM3);
-	timer_disable_break(TIM3);
-	timer_set_break_polarity_high(TIM3);
-	timer_disable_break_automatic_output(TIM3);
-	timer_set_break_lock(TIM3, TIM_BDTR_LOCK_OFF);
-	
-	timer_disable_oc_clear(TIM1, TIM_OC3);
-	timer_enable_oc_preload(TIM1, TIM_OC3);
-	timer_set_oc_slow_mode(TIM1, TIM_OC3);
-	timer_set_oc_mode(TIM1, TIM_OC3, TIM_OCM_PWM1);
-	
-	timer_set_oc_polarity_high(TIM1, TIM_OC3);
-	timer_set_oc_idle_state_set(TIM1, TIM_OC3);
-	timer_set_oc_polarity_high(TIM1, TIM_OC3N);
-	timer_set_oc_idle_state_set(TIM1, TIM_OC3N);
-	
-	timer_set_oc_value(TIM1, TIM_OC3, rcc_apb2_frequency / 32000);
-	
-	timer_enable_oc_output(TIM1, TIM_OC3);
-	timer_enable_oc_output(TIM1, TIM_OC3N);
-	
-	timer_enable_preload(TIM1);
-	
-	timer_enable_break_main_output(TIM1);
-	
-	timer_enable_counter(TIM1);*/
-  int i =0;
-  dp.clearDisplay(0);
-  
-    dp.printHex(0,bm.init(),0);
-    robust_delay(1000);
-  while(1)
+  while(true)
   {
-  
-    dp.clearDisplay(0);
-    //bm.takeForcedMeasurement();
-    dp.printFloat(0,bm.readTemperature(),0);
-    dp.printFloat(0,bm.readHumidity(),4);
-    //dp.printFloat(0,(lm75temp()/256.0),4);
-    robust_delay(100);
+    gpio_set(GPIOB, GPIO12);
+    delay_ms(1000);
+    gpio_clear(GPIOB, GPIO12);
+    delay_ms(1000);
   }
-  
-  
-  
+  //i2csetup();
+  //usartsetup();
+  //spisetup();
+  //printf("Hello World!\n\r");
+
   return 0;
 }
 
 void clocksetup()
 {
-  rcc_clock_setup_in_hse_8mhz_out_72mhz();
-  
+  rcc_clock_setup_pll(&rcc_hse_configs[RCC_CLOCK_HSE8_72MHZ]);
+
+  delay_setup();
+
   rcc_periph_clock_enable(RCC_GPIOA);
   rcc_periph_clock_enable(RCC_GPIOB);
   rcc_periph_clock_enable(RCC_GPIOC);
@@ -91,7 +34,7 @@ void clocksetup()
   rcc_periph_clock_enable(RCC_SPI1);
   rcc_periph_clock_enable(RCC_I2C2);
   rcc_periph_clock_enable(RCC_USART1);
-  
+
   gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO5 | GPIO7);
   gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO6);
 }
@@ -103,7 +46,7 @@ void i2csetup()
   i2c_peripheral_disable(I2C2);
 
 	/* APB1 is running at 36MHz. */
-  i2c_set_clock_frequency(I2C2, I2C_CR2_FREQ_36MHZ);
+  i2c_set_clock_frequency(I2C2, 36);
   /* 400KHz - I2C Fast Mode */
   i2c_set_fast_mode(I2C2);
   /*
@@ -133,6 +76,7 @@ void gpiosetup()
   
   gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO8);
   gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO9);
+  gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO12);
   gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
 }
 void spisetup()
