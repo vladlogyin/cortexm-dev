@@ -9,35 +9,54 @@ endif
 
 
 
-SOURCEFILES= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systems.cpp printf/printf.c ili9341/ili9341.cpp
-HEADERFILES= lm75/lm75.h bme280/bme280.h rc522/rc522.h ds3231/ds3231.h max7219/max7219.h main.h systems.h printf/printf.h ili9341/ili9341.h
+SOURCES_CPP= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systems.cpp ili9341/ili9341.cpp
+SOURCES_C= printf/printf.c
+HEADERS= lm75/lm75.h bme280/bme280.h rc522/rc522.h ds3231/ds3231.h max7219/max7219.h main.h systems.h printf/printf.h ili9341/ili9341.h
+OBJECTS=$(patsubst %.cpp, %.o, $(SOURCES_CPP)) $(patsubst %.c, %.o, $(SOURCES_C))
 # setup
-SFLAGS= --static -nostartfiles -std=c++11 -g3 -O0
-SFLAGS+= -fno-common -ffunction-sections -fdata-sections
-SFLAGS+= -I. -I./printf -I./libopencm3/include -L./libopencm3/lib 
-LFLAGS+=-Wl,--start-group -lgcc -lm --specs=nano.specs --specs=nosys.specs -Wl,--end-group
-M3_FLAGS= $(SFLAGS) -mcpu=cortex-m3 -mthumb -msoft-float
-LFLAGS_STM32=$(LFLAGS) $(SOURCEFILES) -T stm32basic.ld
-STM32F1_CFLAGS=$(M3_FLAGS) -DSTM32F1 -DLITTLE_BIT=200000 $(LFLAGS_STM32) -lopencm3_stm32f1
+INCLUDE_DIRS = -I. -I./printf -I./libopencm3/include
+LIBRARY_DIRS = -L./libopencm3/lib
+LIBRARIES = -lgcc -lm -lopencm3_stm32f1
+
+# Select c++17 and turn optimizations on
+COMPILE_OPTIONS= -std=c++17 -O2
+# Include debugging symbols and and turn off optimizations
+COMPILE_OPTIONS+= -g3 -O0
+
+COMPILE_OPTIONS+= -fno-common
 
 CROSS = arm-none-eabi-
 
-CC = $(CROSS)gcc
-CXX = $(CROSS)g++
-AS = $(CROSS)as
-LD = $(CROSS)gcc
+CC= $(CROSS)gcc
+CXX= $(CROSS)g++
+AS= $(CROSS)as
+LD= $(CROSS)gcc
+OBJCP= $(CROSS)objcopy
+AR= $(CROSS)ar
 
+# Define MCU family specific flags here
+# Example for an STM32F1 with a cortex m3
+ARCHITECTURE_FLAGS= -mcpu=cortex-m3 -mthumb -msoft-float -DSTM32F1
 
-CXXFLAGS = $(COMPILE_OPTS) $(INCLUDE_DIRS)
-ASFLAGS = $(COMPILE_OPTS) -c
+CXXFLAGS= $(COMPILE_OPTIONS) $(INCLUDE_DIRS) $(ARCHITECTURE_FLAGS)
+ASFLAGS= $(COMPILE_OPTIONS) -c
 
+LDFLAGS=  -nostartfiles --static --specs=nano.specs --specs=nosys.specs
+# Select linker script
+LDFLAGS+= -T stm32basic.ld
+# Add linker optimizations
+LDFLAGS+= -ffunction-sections -fdata-sections
+# Add libraries
+LDFLAGS+= $(LIBRARY_DIRS) $(LIBRARIES)
+OBJCPFLAGS = -O binary
+ARFLAGS = cr
 #LDFLAGS = -Wl,--gc-sections,-Map=$@.map,-cref,-u,Reset_Handler $(INCLUDE_DIRS) $(LIBRARY_DIRS) -T stm32basic.ld
 
-OBJCP = arm-none-eabi-objcopy
-OBJCPFLAGS = -O binary
 
-AR = arm-none-eabi-ar
-ARFLAGS = cr
+
+
+
+
 
 MAIN_OUT = main
 MAIN_OUT_ELF = $(MAIN_OUT).elf
@@ -45,12 +64,16 @@ MAIN_OUT_BIN = $(MAIN_OUT).bin
 
 # all
 
-all: $(MAIN_OUT_ELF) $(MAIN_OUT_BIN)
+all: build
+
+install: flash
 
 # main
 
-$(MAIN_OUT_ELF): $(SOURCEFILES) $(HEADERFILES) libopencm3/lib/libopencm3_stm32f1.a
-	$(LD) $(STM32F1_CFLAGS) -o $@
+
+
+$(MAIN_OUT_ELF): $(OBJECTS) libopencm3/lib/libopencm3_stm32f1.a
+	$(LD) $(LDFLAGS) $^ -o $@
 
 $(MAIN_OUT_BIN): $(MAIN_OUT_ELF)
 	$(OBJCP) $(OBJCPFLAGS) $< $@
@@ -60,9 +83,9 @@ $(MAIN_OUT_BIN): $(MAIN_OUT_ELF)
 build: $(MAIN_OUT_BIN)
 
 flash: build
-	openocd -f flash/flash.cfg
+	openocd -f flash/stm32_flash.cfg
 debug: flash
-	openocd -f flash/debug.cfg
+	openocd -f flash/stm32_debug.cfg
 
 # libopencm3
 
@@ -77,7 +100,7 @@ libopencm3/lib/libopencm3_%.a: libopencm3/Makefile
 	$(MAKE) -C libopencm3
 
 clean:
-	-rm *.o $(LIBSTM32_OUT) $(MAIN_OUT_ELF) $(MAIN_OUT_BIN)
+	-rm $(MAIN_OUT_ELF) $(MAIN_OUT_BIN) $(OBJECTS)
 
 checktoolchain:
 	@sh utils/checktoolchain.sh $(HOST)
