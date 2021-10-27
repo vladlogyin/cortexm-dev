@@ -1,6 +1,6 @@
 **main.bin
 **main.elf
 **/*.o
-*
+**/*.d
 *.kdev*
 **/*.kate-swp
