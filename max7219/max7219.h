@@ -1,13 +1,14 @@
 #ifndef MAX7219_H
 #define MAX7219_H
 
-#include <systemutils.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/stm32/dma.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/spi.h>
+
+#include <lib/systemutils.h>
 
 #define MAX7219_NOOP   0
 #define MAX7219_DIGIT0 1

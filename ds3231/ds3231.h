@@ -1,8 +1,10 @@
-#include <systemutils.h>
 #include <libopencm3/stm32/i2c.h>
-#include <ctime>
-#define DS3231_ADDRESS 0x68
 
+#include <ctime>
+
+#include <lib/systemutils.h>
+
+#define DS3231_ADDRESS 0x68
 
 class ds3231
 {

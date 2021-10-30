@@ -3,7 +3,7 @@
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/timer.h>
 
-#include <systemutils.h>
+#include <lib/systemutils.h>
 #include <cdcacm/cdcacm.h>
 
 /**

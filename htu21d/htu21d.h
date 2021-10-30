@@ -4,7 +4,8 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/i2c.h>
-#include <systemutils.h>
+
+#include <lib/systemutils.h>
 
 #define HTU21D_ADDRESS               0x40      //chip i2c address
 

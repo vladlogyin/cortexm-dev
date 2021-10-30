@@ -1,11 +1,13 @@
 #ifndef RC522_H
 #define RC522_H
-#include <systemutils.h>
+
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/dma.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/spi.h>
+
+#include <lib/systemutils.h>
 
 // PCD register definitions
 #define RC522_COMMAND 0x01
