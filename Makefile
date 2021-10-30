@@ -9,18 +9,18 @@ endif
 
 
 
-SOURCES_CPP= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systems.cpp ili9341/ili9341.cpp
-SOURCES_C= printf/printf.c
-HEADERS= lm75/lm75.h bme280/bme280.h rc522/rc522.h ds3231/ds3231.h max7219/max7219.h main.h systems.h printf/printf.h ili9341/ili9341.h
+SOURCES_CPP= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systemutils.cpp ili9341/ili9341.cpp cdcacm/cdcacm.cpp
+SOURCES_C= printf/printf.c tinyprintf/tinyprintf.c
+HEADERS= lm75/lm75.h bme280/bme280.h rc522/rc522.h ds3231/ds3231.h max7219/max7219.h main.h systemutils.h printf/printf.h ili9341/ili9341.h cdcacm/cdcacm.h tinyprintf/tinyprintf.h
 OBJECTS:= $(patsubst %.cpp, %.o, $(SOURCES_CPP)) $(patsubst %.c, %.o, $(SOURCES_C))
 DEPENDS:= $(patsubst %.cpp,%.d,$(SOURCES_CPP)) $(patsubst %.c, %.d, $(SOURCES_C))
 # setup
 INCLUDE_DIRS= -I. -I./printf -I./libopencm3/include
 LIBRARY_DIRS= -L./libopencm3/lib
-LIBRARIES= -lgcc -lm -lopencm3_stm32f1 -lnosys
+LIBRARIES= -lgcc -lm -lopencm3_stm32f1 -lstdc++
 
 # Select c++17 and turn optimizations on
-COMPILE_OPTIONS= -fno-exceptions -fno-common -flto -std=c++17 -O2
+COMPILE_OPTIONS= -fno-exceptions -fno-non-call-exceptions -fno-common -ffunction-sections -fdata-sections -flto -std=c++17 -O2 -fno-rtti -finline-small-functions -findirect-inlining
 # Include debugging symbols and and turn off optimizations
 #COMPILE_OPTIONS+= -g3 -O0
 
@@ -29,7 +29,7 @@ CROSS= arm-none-eabi-
 CC= $(CROSS)gcc
 CXX= $(CROSS)g++
 AS= $(CROSS)as
-LD= $(CROSS)gcc
+LD= $(CROSS)g++
 OBJCP= $(CROSS)objcopy
 AR= $(CROSS)ar
 SIZE= $(CROSS)size
@@ -43,11 +43,11 @@ CXXFLAGS= $(COMPILE_OPTIONS) $(ARCHITECTURE_FLAGS) $(INCLUDE_DIRS)
 CFLAGS= $(COMPILE_OPTIONS) $(ARCHITECTURE_FLAGS) $(INCLUDE_DIRS)
 ASFLAGS= $(COMPILE_OPTIONS) -c
 
-LDFLAGS= -flto -mthumb -nostartfiles --static --specs=nano.specs --specs=nosys.specs
+LDFLAGS= -mthumb -nostartfiles --static --specs=nosys.specs --specs=nano.specs
 # Select linker script
 LDFLAGS+= -T stm32basic.ld
 # Add linker optimizations
-LDFLAGS+= -ffunction-sections -fdata-sections
+LDFLAGS+= $(CXXFLAGS)
 # Add libraries
 LDFLAGS+= $(LIBRARY_DIRS) $(LIBRARIES)
 OBJCPFLAGS= -O binary
@@ -72,7 +72,7 @@ install: flash
 	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 %.o: %.c Makefile
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
-
+$(OBJECTS): libopencm3/lib/libopencm3_stm32f1.a
 $(MAIN_OUT_ELF): $(OBJECTS) libopencm3/lib/libopencm3_stm32f1.a
 	$(LD) $(LDFLAGS) $^ -o $@
 	$(SIZE) $@
@@ -85,10 +85,12 @@ $(MAIN_OUT_BIN): $(MAIN_OUT_ELF)
 build: $(MAIN_OUT_BIN)
 
 flash: build
+	-pkill openocd -9
 	openocd -f flash/stm32f1_flash.cfg
 debug: flash
-	openocd -f flash/stm32f1_debug.cfg
-
+	-pkill openocd -9
+	openocd -f flash/stm32f1_debug.cfg &
+	gdb -iex "target extended-remote :3333" main.elf
 # libopencm3
 
 libopencm3/Makefile:
@@ -105,6 +107,6 @@ clean:
 	-rm $(MAIN_OUT_ELF) $(MAIN_OUT_BIN) $(OBJECTS) $(DEPENDS)
 
 checktoolchain:
-	@sh utils/checktoolchain.sh $(HOST)
+	@sh toolchain/checktoolchain.sh $(HOST)
 
 .PHONY: all clean build install flash debug checktoolchain
