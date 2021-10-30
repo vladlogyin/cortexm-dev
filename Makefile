@@ -35,7 +35,7 @@ AR= $(CROSS)ar
 SIZE= $(CROSS)size
 
 # Define MCU specific flags here
-# Example for an STM32F1 with a cortex m3
+# Example for an STM32F103 MCU with a cortex m3 core
 # -mcpu=cortex-m3 -mthumb -msoft-float -DSTM32F1
 ARCHITECTURE_FLAGS= -mcpu=cortex-m3 -mthumb -msoft-float -DSTM32F1
 
@@ -45,7 +45,7 @@ ASFLAGS= $(COMPILE_OPTIONS) -c
 
 LDFLAGS= -mthumb -nostartfiles --static --specs=nosys.specs --specs=nano.specs
 # Select linker script
-LDFLAGS+= -T stm32basic.ld
+LDFLAGS+= -T toolchain/ldscripts/stm32f103.ld
 # Add linker optimizations
 LDFLAGS+= $(CXXFLAGS)
 # Add libraries
@@ -86,10 +86,10 @@ build: $(MAIN_OUT_BIN)
 
 flash: build
 	-pkill openocd -9
-	openocd -f flash/stm32f1_flash.cfg
+	openocd -f toolchain/openocd/stm32f1_flash.cfg
 debug: flash
 	-pkill openocd -9
-	openocd -f flash/stm32f1_debug.cfg &
+	openocd -f toolchain/openocd/stm32f1_debug.cfg &
 	gdb -iex "target extended-remote :3333" main.elf
 # libopencm3
 
