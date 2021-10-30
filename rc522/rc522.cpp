@@ -529,7 +529,7 @@ bool rc522::PICCSetUID(uint8_t* newUID, uint8_t uidSize)
   uint8_t status = PCDAuthenticate(RC522_PICC_MF_AUTHKEYA, 1, &k, &uid);
   if(status != RC522_STATUS_OK) {
   
-    printf("PCDAuthenticate failed\n\r");
+  //printf("PCDAuthenticate failed\n\r");
    return false;
   }
   
@@ -538,7 +538,7 @@ bool rc522::PICCSetUID(uint8_t* newUID, uint8_t uidSize)
   status = MifareRead(0, block0_buffer, &byteCount);
   if(status != RC522_STATUS_OK)
   {
-    printf("MifareRead failed\n\r");
+    //printf("MifareRead failed\n\r");
     return false;
   }
   uint8_t bcc = 0;
@@ -557,7 +557,7 @@ bool rc522::PICCSetUID(uint8_t* newUID, uint8_t uidSize)
   
   status = MifareWrite(0, block0_buffer, 16);
   if(status != RC522_STATUS_OK) {
-    printf("MifareWrite failed\n\r");
+    //printf("MifareWrite failed\n\r");
     return false;
   }
   uint8_t atqaAnswer[2];
@@ -676,12 +676,12 @@ uint8_t rc522::OpenUIDBackdoor()
   uint8_t status = PCDTransceiveData(&cmd, 1, response, &received, &validBits, 0, false);
   if(status != RC522_STATUS_OK)
   {
-    printf("Card did not respond to 0x40 after HALT command. Are you sure it is a UID changeable one?");
+    //printf("Card did not respond to 0x40 after HALT command. Are you sure it is a UID changeable one?");
     return false;
   }
   if(received != 1 || response[0] != 0x0A)
   {
-    printf("Got bad response on backdoor 0x40 command: ");
+    //printf("Got bad response on backdoor 0x40 command: ");
     return false;
   }
   
@@ -690,7 +690,7 @@ uint8_t rc522::OpenUIDBackdoor()
   status = PCDTransceiveData(&cmd, 1, response, &received, &validBits, 0, false);
   if(status != RC522_STATUS_OK)
   {
-    printf("Error in communication at command 0x43, after successfully executing 0x40");
+    //printf("Error in communication at command 0x43, after successfully executing 0x40");
     return false;
   }
   if(received != 1 || response[0] != 0x0A)

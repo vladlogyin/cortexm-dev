@@ -9,13 +9,13 @@ endif
 
 
 
-SOURCES_CPP= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systemutils.cpp ili9341/ili9341.cpp cdcacm/cdcacm.cpp
-SOURCES_C= printf/printf.c tinyprintf/tinyprintf.c
-HEADERS= lm75/lm75.h bme280/bme280.h rc522/rc522.h ds3231/ds3231.h max7219/max7219.h main.h systemutils.h printf/printf.h ili9341/ili9341.h cdcacm/cdcacm.h tinyprintf/tinyprintf.h
+SOURCES_CPP= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systemutils.cpp ili9341/ili9341.cpp
+SOURCES_C= tinyprintf/tinyprintf.c
+
 OBJECTS:= $(patsubst %.cpp, %.o, $(SOURCES_CPP)) $(patsubst %.c, %.o, $(SOURCES_C))
 DEPENDS:= $(patsubst %.cpp,%.d,$(SOURCES_CPP)) $(patsubst %.c, %.d, $(SOURCES_C))
 # setup
-INCLUDE_DIRS= -I. -I./printf -I./libopencm3/include
+INCLUDE_DIRS= -I. -I./libopencm3/include
 LIBRARY_DIRS= -L./libopencm3/lib
 LIBRARIES= -lgcc -lm -lopencm3_stm32f1 -lstdc++
 

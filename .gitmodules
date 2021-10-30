@@ -2,9 +2,6 @@
 	path = libopencm3
 	url = https://github.com/libopencm3/libopencm3
 	branch = master
-[submodule "printf"]
-	path = printf
-	url = https://github.com/mpaland/printf
 [submodule "tinyprintf"]
 	path = tinyprintf
 	url = https://github.com/cjlano/tinyprintf

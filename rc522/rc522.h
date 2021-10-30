@@ -6,7 +6,6 @@
 #include <libopencm3/stm32/dma.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/spi.h>
-#include <printf/printf.h>
 
 // PCD register definitions
 #define RC522_COMMAND 0x01
