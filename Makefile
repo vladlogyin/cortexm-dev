@@ -7,13 +7,19 @@ else
   
 endif
 
+# Change this to a source file containing main()
+PROJECT_SRC:= main.cpp
+PROJECT:= $(basename $(PROJECT_SRC))
+PROJECT_OBJ:= $(PROJECT).o
+PROJECT_ELF:= $(PROJECT).elf
+PROJECT_BIN:= $(PROJECT).bin
 
-
-SOURCES_CPP= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp main.cpp systemutils.cpp ili9341/ili9341.cpp
+SOURCES_CPP= lib/ringbuffer/ringbuffer.cpp
+SOURCES_CPP+= lm75/lm75.cpp bme280/bme280.cpp rc522/rc522.cpp ds3231/ds3231.cpp max7219/max7219.cpp systemutils.cpp ili9341/ili9341.cpp cdcacm/cdcacm.cpp
 SOURCES_C= tinyprintf/tinyprintf.c
 
 OBJECTS:= $(patsubst %.cpp, %.o, $(SOURCES_CPP)) $(patsubst %.c, %.o, $(SOURCES_C))
-DEPENDS:= $(patsubst %.cpp,%.d,$(SOURCES_CPP)) $(patsubst %.c, %.d, $(SOURCES_C))
+DEPENDS:= $(patsubst %.cpp,%.d,$(SOURCES_CPP)) $(patsubst %.c, %.d, $(SOURCES_C)) $(PROJECT).d
 # setup
 INCLUDE_DIRS= -I. -I./libopencm3/include
 LIBRARY_DIRS= -L./libopencm3/lib
@@ -53,10 +59,7 @@ LDFLAGS+= $(LIBRARY_DIRS) $(LIBRARIES)
 OBJCPFLAGS= -O binary
 ARFLAGS= cr
 
-# Output binary name
-MAIN_OUT:= main
-MAIN_OUT_ELF:= $(MAIN_OUT).elf
-MAIN_OUT_BIN:= $(MAIN_OUT).bin
+
 
 # all
 
@@ -73,24 +76,27 @@ install: flash
 %.o: %.c Makefile
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 $(OBJECTS): libopencm3/lib/libopencm3_stm32f1.a
-$(MAIN_OUT_ELF): $(OBJECTS) libopencm3/lib/libopencm3_stm32f1.a
+
+$(PROJECT_ELF): $(PROJECT_OBJ) $(OBJECTS) libopencm3/lib/libopencm3_stm32f1.a
 	$(LD) $(LDFLAGS) $^ -o $@
 	$(SIZE) $@
 
-$(MAIN_OUT_BIN): $(MAIN_OUT_ELF)
+$(PROJECT_BIN): $(PROJECT_ELF)
 	$(OBJCP) $(OBJCPFLAGS) $< $@
 
 
 # flash
-build: $(MAIN_OUT_BIN)
+build: $(PROJECT_BIN)
 
 flash: build
 	-pkill openocd -9
+	-rm target.bin
+	ln -sr $(PROJECT_BIN) target.bin
 	openocd -f toolchain/openocd/stm32f1_flash.cfg
 debug: flash
 	-pkill openocd -9
 	openocd -f toolchain/openocd/stm32f1_debug.cfg &
-	gdb -iex "target extended-remote :3333" main.elf
+	gdb -iex "target extended-remote :3333" $(PROJECT_ELF)
 # libopencm3
 
 libopencm3/Makefile:
@@ -104,7 +110,7 @@ libopencm3/lib/libopencm3_%.a: libopencm3/Makefile
 	$(MAKE) -C libopencm3
 
 clean:
-	-rm $(MAIN_OUT_ELF) $(MAIN_OUT_BIN) $(OBJECTS) $(DEPENDS)
+	-rm $(PROJECT_ELF) $(PROJECT_BIN) $(PROJECT_OBJ) *.bin *.elf *.elf.map *.o $(OBJECTS) $(DEPENDS)
 
 checktoolchain:
 	@sh toolchain/checktoolchain.sh $(HOST)
