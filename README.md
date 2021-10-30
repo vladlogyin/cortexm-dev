@@ -39,5 +39,5 @@ Basically, all MCUs supported by [libopencm3](https://github.com/libopencm3/libo
 ## TODO
 - [ ] Add comments to code and integrate doxygen
 - [ ] Add a USB Mass Storage example
-- [ ] Add a USB CDC ACM example
+- [X] Add a USB CDC ACM example
 - [ ] Add a CAN example
