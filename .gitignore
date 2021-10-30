@@ -1,5 +1,6 @@
-**main.bin
-**main.elf
+*.bin
+*.elf
+*.elf.map
 **/*.o
 **/*.d
 *.kdev*
