@@ -44,8 +44,8 @@
 */
 /***************************************************************************************************/
 
-#ifndef BMP180_h
-#define BMP180_h
+#ifndef BMP180_H
+#define BMP180_H
 //#include <math.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>

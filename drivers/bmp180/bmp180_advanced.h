@@ -40,10 +40,10 @@
 */
 /***************************************************************************************************/
 
-#ifndef BMP180advanced_h
-#define BMP180advanced_h
+#ifndef BMP180_ADVANCED_H
+#define BMP180_ADVANCED_H
   
-#include <BMP180.h>
+#include "bmp180.h"
 
 
 #define BMP180_SEA_LEVEL_PRESSURE 101325 //average see level pressure, in Pa

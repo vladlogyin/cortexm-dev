@@ -21,7 +21,7 @@ SOURCES_C= tinyprintf/tinyprintf.c
 OBJECTS:= $(patsubst %.cpp, %.o, $(SOURCES_CPP)) $(patsubst %.c, %.o, $(SOURCES_C))
 DEPENDS:= $(patsubst %.cpp,%.d,$(SOURCES_CPP)) $(patsubst %.c, %.d, $(SOURCES_C)) $(PROJECT).d
 # setup
-INCLUDE_DIRS= -I. -I./libopencm3/include
+INCLUDE_DIRS= -I. -I./drivers -I./libopencm3/include
 LIBRARY_DIRS= -L./libopencm3/lib
 LIBRARIES= -lgcc -lm -lopencm3_stm32f1 -lstdc++
 
