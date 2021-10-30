@@ -76,7 +76,7 @@ install: flash
 	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 %.o: %.c Makefile
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
-$(OBJECTS): libopencm3/lib/libopencm3_stm32f1.a
+$(PROJECT_OBJ) $(OBJECTS): libopencm3/lib/libopencm3_stm32f1.a
 
 $(PROJECT_ELF): $(PROJECT_OBJ) $(OBJECTS) libopencm3/lib/libopencm3_stm32f1.a
 	$(LD) $(LDFLAGS) $^ -o $@
