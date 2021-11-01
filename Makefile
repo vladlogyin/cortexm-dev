@@ -41,6 +41,9 @@ OBJCP= $(CROSS)objcopy
 AR= $(CROSS)ar
 SIZE= $(CROSS)size
 
+# Assume the system's gdb doesn't support multitarget so we use the cross-compiler's gdb
+GDB= $(CROSS)gdb
+
 # Define MCU specific flags here
 # Example for an STM32F103 MCU with a cortex m3 core
 # -mcpu=cortex-m3 -mthumb -msoft-float -DSTM32F1
@@ -97,7 +100,7 @@ flash: build
 debug: flash
 	-pkill openocd -9
 	openocd -f toolchain/openocd/stm32f1_debug.cfg &
-	gdb -iex "target extended-remote :3333" $(PROJECT_ELF)
+	$(GDB) -iex "target extended-remote :3333" $(PROJECT_ELF)
 # libopencm3
 
 libopencm3/Makefile:

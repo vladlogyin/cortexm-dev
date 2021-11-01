@@ -1,6 +1,7 @@
 #!/bin/sh
-COMPILER="gcc g++ as ld objcopy objdump"
-TOOLS="gdb openocd"
+# There is a version of GDB that does support multitarget, but not all of them do, currently assume the OS shipped one doesn't
+COMPILER="gcc g++ as ld objcopy objdump gdb"
+TOOLS="openocd"
 check_binaries()
 {
  error=0
@@ -18,11 +19,11 @@ check_binaries()
     # Check if all other tool binaries can be found
     for tool in $TOOLS
     do
-      TOOLPATH=$(which tool 2>/dev/null)
+      TOOLPATH=$(which $tool 2>/dev/null)
       if [ $? -eq 0 ]; then
-        echo "$tools found: $TOOLPATH"
+        echo "$tool found: $TOOLPATH"
       else
-        echo "$tools not found"
+        echo "$tool not found"
         error=1
       fi
     done
@@ -68,9 +69,9 @@ case $1 in
         DISTRO=$(lsb_release -is)
         case $DISTRO in
           "LinuxMint"|"Mint")
-          ;;&
+          ;&
           "Ubuntu")
-          ;;&
+          ;&
           "Debian")
             # Almost all debian derivatives use aptitude as their package manager
             do_apt_install
@@ -79,9 +80,9 @@ case $1 in
             do_portage_install
           ;;
           "Artix"|"artix"|"artixlinux"|"Artix release"|"Artix Linux")
-          ;;&
+          ;&
           "ManjaroLinux")
-          ;;&
+          ;&
           "Arch"|"archlinux"|"arch"|"Arch Linux")
            # Almost all arch derivatives use pacman as their package manager
             do_pacman_install
