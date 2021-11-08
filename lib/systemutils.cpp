@@ -37,9 +37,9 @@ void delay_us(uint16_t us)
 
 void delay_ms(uint16_t ms)
 {
-  timer_set_prescaler(TIMDELAY, rcc_apb1_frequency / 500 - 1);
+  timer_set_prescaler(TIMDELAY, rcc_apb1_frequency / 5000 - 1);
   timer_one_shot_mode(TIMDELAY);
-  timer_set_period(TIMDELAY, ms);
+  timer_set_period(TIMDELAY, 10*ms);
   timer_generate_event(TIMDELAY, TIM_EGR_UG);
   timer_enable_counter(TIMDELAY);
 
