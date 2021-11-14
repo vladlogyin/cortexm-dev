@@ -116,6 +116,9 @@ libopencm3/lib/libopencm3_%.a: libopencm3/Makefile
 clean:
 	-rm $(PROJECT_ELF) $(PROJECT_BIN) $(PROJECT_OBJ) *.bin *.elf *.elf.map *.o $(OBJECTS) $(DEPENDS)
 
+cleanall: clean
+	$(MAKE) -C libopencm3 clean
+
 checktoolchain:
 	@/bin/sh toolchain/checkbash.sh $(HOST)
 	@/bin/bash toolchain/checktoolchain.sh $(HOST)
