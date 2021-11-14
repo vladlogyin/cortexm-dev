@@ -80,7 +80,7 @@ do_portage_install()
     fi
     echo "Building toolchain using crossdev"
     sudo crossdev -S -s4 --ex-gdb -t arm-none-eabi --genv 'EXTRA_ECONF="--with-multilib-list=rmprofile"'
-    if [ $? -eq 0 ]; then
+    if [ $? -ne 0 ]; then
       echo "Failed to build toolchain"
       return 3
     fi
