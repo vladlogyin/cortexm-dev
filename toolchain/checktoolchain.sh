@@ -1,7 +1,9 @@
-#!/bin/sh
+ #!/bin/bash
+
 # There is a version of GDB that does support multitarget, but not all of them do, currently assume the OS shipped one doesn't
 COMPILER="gcc g++ as ld objcopy objdump gdb"
 TOOLS="openocd"
+
 check_binaries()
 {
  error=0
@@ -29,6 +31,64 @@ check_binaries()
     done
     return $error
 }
+
+do_portage_install()
+{
+  # TODO actually test this
+  
+  # Check if sudo is installed
+  which sudo
+  if [ $? -eq 0 ]; then
+  
+    echo "Checking package USE flags"
+    if not grep -Rxq "dev-embedded/openocd.*" /etc/portage/package.use
+    then
+      echo "openocd USE flags not found"
+      printf "\n#Added automatically\ndev-embedded/openocd ftdi jlink parport" | sudo tee -a /etc/portage/package.use/cross-zz >/dev/null
+      if [ $? -ne 0 ]; then 
+        return 11
+      fi
+    fi
+    if not grep -Rxq "cross-arm-none-eabi/newlib.*nano.*" /etc/portage/package.use
+    then
+      echo "newlib USE flags not found"
+      printf "\n#Added automatically\ncross-arm-none-eabi/newlib nano" | sudo tee -a /etc/portage/package.use/cross-zz >/dev/null
+      if [ $? -ne 0 ]; then 
+        return 11
+      fi
+    fi
+
+    which openocd
+    if [ $? -eq 0 ]; then
+      echo "openocd is already installed"
+    else
+      echo "Installling openocd"
+      sudo emerge -a dev-embedded/openocd
+    fi
+    # Check if crossdev is installed
+    which crossdev
+    if [ $? -eq 0 ]; then
+      echo "crossdev is already installed"
+    else
+      echo "Installling crossdev"
+      sudo emerge -a sys-devel/crossdev
+      which crossdev
+      if [ $? -ne 0 ]; then
+        echo "Failed to install crossdev"
+        return 2
+      fi
+    fi
+    echo "Building toolchain using crossdev"
+    sudo crossdev -S -s4 --ex-gdb -t arm-none-eabi --genv 'EXTRA_ECONF="--with-multilib-list=rmprofile"'
+    if [ $? -eq 0 ]; then
+      echo "Failed to build toolchain"
+      return 3
+    fi
+    return 0
+  fi
+  return 1
+}
+
 do_pacman_install()
 {
   # Check if sudo is installed
@@ -88,8 +148,6 @@ case $1 in
             do_pacman_install
           ;;
         esac
-      else
-        echo "poop"
       fi
       
     fi
@@ -105,7 +163,7 @@ case $1 in
       echo "Homebrew is installed"
     else
       echo "Running brew install script"
-      /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
     # If installer script return anything other than 0, error out
     if [ $? -eq 0 ]; then

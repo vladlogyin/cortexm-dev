@@ -117,6 +117,7 @@ clean:
 	-rm $(PROJECT_ELF) $(PROJECT_BIN) $(PROJECT_OBJ) *.bin *.elf *.elf.map *.o $(OBJECTS) $(DEPENDS)
 
 checktoolchain:
-	@sh toolchain/checktoolchain.sh $(HOST)
+	@/bin/sh toolchain/checkbash.sh $(HOST)
+	@/bin/bash toolchain/checktoolchain.sh $(HOST)
 
 .PHONY: all clean build install flash debug checktoolchain
