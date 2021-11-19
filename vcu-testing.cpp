@@ -4,7 +4,7 @@
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/cm3/nvic.h>
 
-//#include <lib/systemutils.cpp>
+#include <lib/systemutils.h>
 
 void clock_setup();
 void pwm_setup();
@@ -13,7 +13,7 @@ void adc_setup();
 int main()
 {
   clock_setup();
-  //delay_setup();
+  delay_setup();
   pwm_setup();
   adc_setup();
 
@@ -21,8 +21,7 @@ int main()
 
   while(true)
   {
-    __asm("nop");
-    //delay_ms(100);
+    delay_ms(100);
   }
 
   return 0;
