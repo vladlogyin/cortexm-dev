@@ -8,15 +8,15 @@ else
 endif
 
 # Change this to a source file containing main()
-PROJECT_SRC:= main.cpp
+PROJECT_SRC:= vcu-testing.cpp
 PROJECT:= $(basename $(PROJECT_SRC))
 PROJECT_OBJ:= $(PROJECT).o
 PROJECT_ELF:= $(PROJECT).elf
 PROJECT_BIN:= $(PROJECT).bin
 
 SOURCES_CPP= lib/ringbuffer/ringbuffer.cpp
-SOURCES_CPP+= drivers/lm75/lm75.cpp drivers/bme280/bme280.cpp drivers/rc522/rc522.cpp drivers/ds3231/ds3231.cpp drivers/max7219/max7219.cpp drivers/ili9341/ili9341.cpp drivers/cdcacm/cdcacm.cpp
-SOURCES_CPP+= lib/systemutils.cpp lib/ringbuffer/ringbuffer.cpp
+#SOURCES_CPP+= drivers/lm75/lm75.cpp drivers/bme280/bme280.cpp drivers/rc522/rc522.cpp drivers/ds3231/ds3231.cpp drivers/max7219/max7219.cpp drivers/ili9341/ili9341.cpp drivers/cdcacm/cdcacm.cpp
+SOURCES_CPP+= lib/systemutils.cpp
 SOURCES_C= tinyprintf/tinyprintf.c
 
 OBJECTS:= $(patsubst %.cpp, %.o, $(SOURCES_CPP)) $(patsubst %.c, %.o, $(SOURCES_C))
