@@ -120,7 +120,7 @@ cleanall: clean
 	$(MAKE) -C libopencm3 clean
 
 checktoolchain:
-	@/bin/sh toolchain/checkbash.sh $(HOST)
-	@/bin/bash toolchain/checktoolchain.sh $(HOST)
+	@sh toolchain/checkbash.sh $(HOST)
+	@bash toolchain/checktoolchain.sh $(HOST)
 
 .PHONY: all clean build install flash debug checktoolchain
