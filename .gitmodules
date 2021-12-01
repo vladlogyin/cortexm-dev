@@ -1,7 +1,7 @@
 [submodule "libopencm3"]
 	path = libopencm3
 	url = https://github.com/ugracing/libopencm3
-	branch = master
+	branch = l4-ugr
 [submodule "tinyprintf"]
 	path = tinyprintf
 	url = https://github.com/cjlano/tinyprintf
