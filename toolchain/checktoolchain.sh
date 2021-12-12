@@ -1,6 +1,6 @@
  #!/bin/bash
 
-# There is a version of GDB that does support multitarget, but not all of them do, currently assume the OS shipped one doesn't
+# There are versions of GDB that support multitarget, but not all of them do, currently assume the OS shipped one doesn't
 COMPILER="gcc g++ as ld objcopy objdump gdb"
 TOOLS="openocd"
 
@@ -17,7 +17,7 @@ check_binaries()
         error=1
       fi
     done
-    
+
     # Check if all other tool binaries can be found
     for tool in $TOOLS
     do
@@ -34,26 +34,25 @@ check_binaries()
 
 do_portage_install()
 {
-  # TODO actually test this
-  
   # Check if sudo is installed
   which sudo
   if [ $? -eq 0 ]; then
-  
+
     echo "Checking package USE flags"
     if not grep -Rxq "dev-embedded/openocd.*" /etc/portage/package.use
     then
       echo "openocd USE flags not found"
       printf "\n#Added automatically\ndev-embedded/openocd ftdi jlink parport" | sudo tee -a /etc/portage/package.use/cross-zz >/dev/null
-      if [ $? -ne 0 ]; then 
+      if [ $? -ne 0 ]; then
         return 11
       fi
     fi
     if not grep -Rxq "cross-arm-none-eabi/newlib.*nano.*" /etc/portage/package.use
     then
       echo "newlib USE flags not found"
-      printf "\n#Added automatically\ncross-arm-none-eabi/newlib nano" | sudo tee -a /etc/portage/package.use/cross-zz >/dev/null
-      if [ $? -ne 0 ]; then 
+      printf "\n#Added automatically\ncross-arm-none-eabi/newlib nano" |\
+sudo tee -a /etc/portage/package.use/cross-zz >/dev/null
+      if [ $? -ne 0 ]; then
         return 11
       fi
     fi
@@ -96,63 +95,87 @@ do_pacman_install()
   if [ $? -eq 0 ]; then
     # Trigger database update
     sudo pacman -Syy
-    sudo pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-gdb arm-none-eabi-newlib openocd
+    sudo pacman -S arm-none-eabi-gcc arm-none-eabi-binutils \
+arm-none-eabi-gdb arm-none-eabi-newlib openocd
     return $?
   elif [ $(id -u) -eq 0 ]; then
     # We're root, so we can still proceed
     pacman -Syy
-    pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-gdb arm-none-eabi-newlib openocd
+    pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-gdb \
+arm-none-eabi-newlib openocd
     return $?
   else
     # We can't really do anything except complain
-    echo "You need to be root or have sudo set up for this script to automatically install the required packages"
+    echo "You need to be root or have sudo set up for this script to \
+automatically install the required packages"
     return 1
   fi
+}
+
+do_apt_install()
+{
+  sudo apt update
+  sudo apt install gcc-arm-none-eabi openocd gdb-multiarch
+}
+
+do_wsl_extras()
+{
+  openocd_curl=$( \
+curl -s https://api.github.com/repos/openocd-org/\
+openocd/releases/latest | \
+grep -o "openocd.*w64.*.tar.gz" | cut -d '"' -f 4 )
+  openocd_download="/tmp/"
+  openocd_download+=$( echo "$openocd_curl" | \
+grep -ox "openocd-v[^[:space:]]*.tar.gz" )
+  openocd_url=$( echo "$openocd_curl" | grep -ox "openocd-org.*.tar.gz" )
+  wget "https://github.com/$openocd_url" -O "$openocd_download"
+  script_path=$(dirname -- "${BASH_SOURCE[0]}")
+  mkdir "$script_path/openocd-win"
+  tar -xvf "$openocd_download" -C "$script_path/openocd-win/"
+  rm "$openocd_download"
+  # Add the root certificate of the driver
+  certutil.exe -addstore -v root $script_path/stlink-win/ugr.crt
+  # Install the driver
+  pnputil.exe -i -a $script_path/stlink-win/stlink_dbg_winusb.inf
 }
 
 echo Checking toolchain for $1
 
 case $1 in
-  Windows)
-    echo "???"
-  ;;
-  Linux)
+  "WSL"|"Linux")
+    if [ $1 == "WSL" ]; then
+      do_wsl_extras
+    fi
     # Check if all required compiler binaries can be found
     CROSS="arm-none-eabi-"
     check_binaries
     if [ $? -eq 0 ]; then
       echo "Toolchain binaries are present"
     else
-      # Try to figure out which distro we're on in order to attempt to install the right packages
+      # Try to figure out which distro we're on in order to
+      # install packages using the right manager
       which lsb_release
       if [ $? -eq 0 ]; then
         DISTRO=$(lsb_release -is)
         case $DISTRO in
-          "LinuxMint"|"Mint")
-          ;&
-          "Ubuntu")
-          ;&
-          "Debian")
-            # Almost all debian derivatives use aptitude as their package manager
+          "LinuxMint"|"Mint"|"Ubuntu"|"Debian")
+            # Debian & derivatives use aptitude as their package manager
             do_apt_install
           ;;
           "Gentoo")
             do_portage_install
           ;;
-          "Artix"|"artix"|"artixlinux"|"Artix release"|"Artix Linux")
-          ;&
-          "ManjaroLinux")
-          ;&
-          "Arch"|"archlinux"|"arch"|"Arch Linux")
-           # Almost all arch derivatives use pacman as their package manager
+          "Artix"|"artix"|"artixlinux"|"Artix release"|"Artix Linux"|\
+          "ManjaroLinux"|"Arch"|"archlinux"|"arch"|"Arch Linux")
+           # Arch & derivatives use pacman
             do_pacman_install
           ;;
         esac
       fi
-      
+
     fi
   ;;
-  Darwin)
+  "Darwin")
     if [ $(uname -m) != "x86_64" ]; then
       echo "only AMD64 is supported"
       exit 1
@@ -163,9 +186,10 @@ case $1 in
       echo "Homebrew is installed"
     else
       echo "Running brew install script"
-      sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      bash -c "$(curl -fsSL \
+      https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-    # If installer script return anything other than 0, error out
+    # Check if the installer script errored out
     if [ $? -eq 0 ]; then
       echo "Homebrew is installed"
     else
@@ -190,4 +214,3 @@ case $1 in
     echo "$1 is unsupported"
   ;;
 esac
-

@@ -5,3 +5,4 @@
 **/*.d
 *.kdev*
 **/*.kate-swp
+toolchain/.checktoolchain
