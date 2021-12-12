@@ -6,3 +6,4 @@
 *.kdev*
 **/*.kate-swp
 toolchain/.checktoolchain
+toolchain/openocd-win/**
